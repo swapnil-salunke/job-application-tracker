@@ -20,6 +20,18 @@ No data is bundled in this skill. It reads only your own mail.
 git clone https://github.com/swapnil-salunke/job-application-tracker.git ~/.claude/skills/job-application-tracker
 ```
 
+### Use it in Codex or Cursor
+
+The same repo works in other agents. Mailbox connection uses IMAP with an app password (or a mail MCP server), and the tracker is stored as a local `job-tracker/` folder instead of a Claude Artifact. Daily scheduling is manual or via cron.
+
+**Codex**: clone the repo into your project (or any folder you run Codex in). Codex reads [`AGENTS.md`](AGENTS.md), which points to `SKILL.md`. Then say "Set up my job application tracker".
+
+```bash
+git clone https://github.com/swapnil-salunke/job-application-tracker.git
+```
+
+**Cursor**: clone the repo and open it in Cursor, or copy `SKILL.md`, `scripts/`, `references/`, `assets/` and `.cursor/rules/job-application-tracker.mdc` into your project. The rule loads when you ask about job applications.
+
 ### 2. Start setup
 In a new chat, say:
 
@@ -62,6 +74,8 @@ The tracker contains company names and dates. Share it view-only, and only with 
 | `scripts/imap_search.py` | Searches mail over IMAP |
 | `references/` | Data schema and provider connection details |
 | `assets/tracker-page.html` | Tracker page template |
+| `AGENTS.md` | Entry point for Codex |
+| `.cursor/rules/` | Rule for Cursor |
 | `GETTING-STARTED.md` | Short guide for non-technical users |
 
 ## License

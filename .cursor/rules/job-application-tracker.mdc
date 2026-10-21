@@ -1,0 +1,11 @@
+---
+description: Track job applications from the user's email inbox; use when asked to set up, refresh or check job applications, statuses or candidate portals
+alwaysApply: false
+---
+
+Follow the instructions in @SKILL.md for the job application tracker.
+
+- Use `scripts/` and `references/` as SKILL.md directs; run scripts with `python3`.
+- Mailbox: use a mail MCP server if configured, otherwise IMAP via `scripts/imap_search.py` with env vars `MAIL_IMAP_HOST`, `MAIL_USER`, `MAIL_APP_PASSWORD`. Never store the password in files or replies.
+- Storage: there is no Artifact tool in Cursor. Use the local-folder option: `job-tracker/data.json` plus `job-tracker/index.html` built from `assets/tracker-page.html`.
+- Scheduling: no built-in scheduler; suggest cron or manual runs for the daily check.
