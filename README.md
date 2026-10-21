@@ -4,12 +4,14 @@ Tracks your job applications from your email inbox. It finds every application (
 
 No data is bundled in this skill. It reads only your own mail.
 
+**[Download the latest `.skill` file](https://github.com/swapnil-salunke/job-application-tracker/releases/latest/download/job-application-tracker.skill)** · [All releases](https://github.com/swapnil-salunke/job-application-tracker/releases)
+
 ## Step-by-step guide
 
 ### 1. Install the skill
 
 **Claude app (easiest)**
-1. Download `job-application-tracker.skill` from the [latest release](https://github.com/swapnil-salunke/job-application-tracker/releases/latest).
+1. [Download `job-application-tracker.skill`](https://github.com/swapnil-salunke/job-application-tracker/releases/latest/download/job-application-tracker.skill) (always the latest release).
 2. Open Claude, go to **Settings > Skills**, and choose **Upload skill**.
 3. Select the downloaded file and make sure the skill is switched on.
 
