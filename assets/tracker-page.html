@@ -1,0 +1,149 @@
+<title>Application Portals</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single working ledger — sticky filter bar, then sections by period, each a dense table that collapses to cards on phones */
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --fg:#1b2230; --muted:#5d6777; --line:#dfe3ea;
+  --accent:#2350c8; --accent-soft:#e7edfc;
+  --ok:#1f7a4d; --ok-soft:#e3f3ea; --bad:#a3392b; --bad-soft:#f8e6e2; --warn:#8a5a00; --warn-soft:#fbf0d6; --ref:#5b3fa8; --ref-soft:#eee8fa;
+  --display:"Fraunces", Georgia, serif; --body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; --mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12161d; --surface:#1a1f28; --fg:#e7ebf2; --muted:#9aa4b4; --line:#2c3340;
+  --accent:#86a6ff; --accent-soft:#1f2a44;
+  --ok:#6fd1a0; --ok-soft:#173226; --bad:#f19a8c; --bad-soft:#3a1f1b; --warn:#f0c46a; --warn-soft:#3a2f16; --ref:#bba6f5; --ref-soft:#2a2340; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12161d; --surface:#1a1f28; --fg:#e7ebf2; --muted:#9aa4b4; --line:#2c3340;
+  --accent:#86a6ff; --accent-soft:#1f2a44;
+  --ok:#6fd1a0; --ok-soft:#173226; --bad:#f19a8c; --bad-soft:#3a1f1b; --warn:#f0c46a; --warn-soft:#3a2f16; --ref:#bba6f5; --ref-soft:#2a2340; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:14px;line-height:1.45}
+.wrap{max-width:1120px;margin:0 auto;padding-block:28px 56px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+h1{font-family:var(--display);font-weight:600;font-size:clamp(26px,4vw,36px);margin:0 0 6px;text-wrap:balance}
+.lede{color:var(--muted);margin:0 0 18px;max-width:70ch}
+.stats{display:flex;flex-wrap:wrap;gap:8px 18px;margin:0 0 18px;font-variant-numeric:tabular-nums;color:var(--muted)}
+.stats b{color:var(--fg);font-weight:600}
+.bar{position:sticky;top:env(safe-area-inset-top, 0px);z-index:5;background:var(--bg);padding-block:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top, 0px);z-index:10;background:var(--bg)}
+.bar input{flex:1 1 220px;min-width:0;font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--fg)}
+.chip{font:inherit;font-size:13px;padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--fg);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.chip:focus-visible,.bar input:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+section{margin-top:28px}
+h2{font-family:var(--display);font-weight:600;font-size:20px;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 10px;max-width:75ch}
+.tbl{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--surface)}
+tr:last-child td{border-bottom:0}
+td.date{font-family:var(--mono);font-size:12.5px;white-space:nowrap;color:var(--muted);font-variant-numeric:tabular-nums}
+td.co{font-weight:600;white-space:nowrap}
+.role{color:var(--fg)}
+.note{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.s-applied{background:var(--ok-soft);color:var(--ok)}
+.s-rejected{background:var(--bad-soft);color:var(--bad)}
+.s-action{background:var(--warn-soft);color:var(--warn)}
+.s-referral{background:var(--ref-soft);color:var(--ref)}
+.links{display:flex;flex-direction:column;gap:3px}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.portal{font-weight:500}
+.unv{font-size:11px;color:var(--warn);margin-left:4px}
+.mail{font-size:12.5px;color:var(--muted)}
+.empty{padding:16px;color:var(--muted)}
+.foot{margin-top:28px;color:var(--muted);font-size:13px;max-width:80ch}
+@media (max-width:640px){
+  table,thead,tbody,tr,td{display:block}
+  thead{display:none}
+  tr{padding:10px 12px;border-bottom:1px solid var(--line)}
+  td{border:0;padding:2px 0}
+  td.co{white-space:normal}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.new{display:inline-block;margin-left:6px;font-size:11px;font-weight:600;padding:1px 6px;border-radius:999px;background:var(--accent-soft);color:var(--accent);vertical-align:middle}
+.due{display:block;font-size:12.5px;font-weight:600;margin-top:3px;color:var(--warn)}
+.due.over{color:var(--bad)}
+.src{display:block;font-size:11.5px;color:var(--muted);margin-top:2px}
+.todo{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--warn);border-radius:8px;padding:12px 14px;margin:0 0 18px}
+.todo h2{font-size:17px;margin:0 0 6px}
+.todo ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.todo .over{color:var(--bad);font-weight:600}
+</style>
+
+<div class="wrap">
+  <h1>Application Portals</h1>
+  <p class="lede" id="lede">Loading your applications…</p>
+  <div class="stats" id="stats"></div>
+  <div class="todo" id="todo" hidden><h2>Needs your action</h2><ul id="todo-list"></ul></div>
+
+  <div class="bar" role="search">
+    <input id="q" type="search" placeholder="Filter by company or role…" autocomplete="off" aria-label="Filter by company or role">
+    <button class="chip" id="f-all" aria-pressed="true" data-f="all">All</button>
+    <button class="chip" id="f-applied" aria-pressed="false" data-f="applied">In review</button>
+    <button class="chip" id="f-action" aria-pressed="false" data-f="action">Needs action</button>
+    <button class="chip" id="f-rejected" aria-pressed="false" data-f="rejected">Closed</button>
+  </div>
+
+  <div id="sections"></div>
+  <p class="foot" id="foot"></p>
+</div>
+
+<script>
+const G = id => `https://mail.google.com/mail/u/0/#all/${id}`;
+const LABEL = {applied:"In review", rejected:"Closed", action:"Needs action", referral:"Referral", interview:"Interview", offer:"Offer"};
+const CLS = {applied:"s-applied", rejected:"s-rejected", action:"s-action", referral:"s-referral", interview:"s-referral", offer:"s-applied"};
+let DATA = null, filter = "all";
+const today = () => new Date().toISOString().slice(0,10);
+function esc(s){return String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function fmt(d){const t=new Date(d+"T00:00:00");return t.toLocaleDateString("en-GB",{day:"numeric",month:"short"})}
+function isNew(a){ if(!a.added) return false; const d=(new Date(today())-new Date(a.added))/864e5; return d>=0&&d<3; }
+function dueText(a){ if(!a.action) return ""; const over=a.action.due<today(); return `<span class="due${over?" over":""}">${over?"Overdue since":"Due"} ${fmt(a.action.due)}: ${esc(a.action.label)}</span>`; }
+function linkCell(a){
+  const out=[];
+  if(a.portal){const lbl=a.source==="LinkedIn Easy Apply"?"LinkedIn › Applied":a.source==="Naukri"?"Naukri › Applied jobs":"Open portal";
+    out.push(`<a class="portal" href="${esc(a.portal)}" target="_blank" rel="noopener">${lbl}</a>${a.portal_unverified?'<span class="unv">unverified</span>':''}`);}
+  const prov=(DATA.config&&DATA.config.mail&&DATA.config.mail.provider)||"google";
+  if(a.email_link) out.push(`<a class="mail" href="${esc(a.email_link)}" target="_blank" rel="noopener">Confirmation email</a>`);
+  else if(a.thread&&prov==="google") out.push(`<a class="mail" href="${G(a.thread)}" target="_blank" rel="noopener">Confirmation email</a>`);
+  else if(a.email_ref) out.push(`<span class="mail">Email: ${esc(a.email_ref)}</span>`);
+  return `<div class="links">${out.join("")}</div>`;
+}
+function matches(a,q){
+  const f = filter==="all" || a.status===filter || (filter==="action"&&(a.status==="referral"||!!a.action)) || (filter==="applied"&&(a.status==="interview"||a.status==="offer"));
+  return f && (!q || (a.company+" "+(a.role||"")+" "+(a.note||"")+" "+a.source).toLowerCase().includes(q));
+}
+function table(items){
+  const body=items.length?items.map(a=>`<tr>
+    <td class="date">${esc(a.date)}</td>
+    <td class="co">${esc(a.company)}${isNew(a)?'<span class="new">New</span>':""}<span class="src">${esc(a.source)}</span></td>
+    <td><span class="role">${esc(a.role||"—")}</span>${a.note?`<span class="note">${esc(a.note)}</span>`:""}${dueText(a)}</td>
+    <td><span class="pill ${CLS[a.status]||"s-applied"}">${LABEL[a.status]||esc(a.status)}</span></td>
+    <td>${linkCell(a)}</td></tr>`).join(""):`<tr><td colspan="5" class="empty">Nothing matches this filter.</td></tr>`;
+  return `<div class="tbl"><table><thead><tr><th>Date</th><th>Company</th><th>Role</th><th>Status</th><th>Links</th></tr></thead><tbody>${body}</tbody></table></div>`;
+}
+function render(){
+  const q=document.getElementById("q").value.trim().toLowerCase();
+  const all=[...DATA.apps].sort((a,b)=>b.date.localeCompare(a.date));
+  const recent=all.filter(a=>a.date>=DATA.window_start&&matches(a,q));
+  const older=all.filter(a=>a.date<DATA.window_start&&matches(a,q));
+  document.getElementById("sections").innerHTML=
+    `<section id="recent"><h2>Since ${fmt(DATA.window_start)} <span class="cnt">(${recent.length})</span></h2>${table(recent)}</section>
+     <section id="earlier"><details${q?" open":""}><summary style="cursor:pointer"><h2 style="display:inline">Older applications <span class="cnt">(${older.length})</span></h2></summary><p class="sub">Mostly closed. Kept so you can spot repeat applications.</p>${table(older)}</details></section>`;
+}
+function summary(){
+  const R=DATA.apps.filter(a=>a.date>=DATA.window_start);
+  const acts=DATA.apps.filter(a=>a.action).sort((a,b)=>a.action.due.localeCompare(b.action.due));
+  document.getElementById("lede").textContent=`Your job applications in one list, each with a link to check its status. Checked daily; last updated ${fmt(DATA.updated)} ${DATA.updated.slice(0,4)}.`;
+  document.getElementById("stats").innerHTML=`<span><b>${R.length}</b> since ${fmt(DATA.window_start)}</span><span><b>${R.filter(a=>a.status==="applied").length}</b> in review</span><span><b>${R.filter(a=>a.status==="interview"||a.status==="offer").length}</b> interviews/offers</span><span><b>${acts.length}</b> need action</span><span><b>${R.filter(a=>a.status==="rejected").length}</b> closed</span>`;
+  if(acts.length){document.getElementById("todo").hidden=false;
+    document.getElementById("todo-list").innerHTML=acts.map(a=>{const over=a.action.due<today();return `<li><b>${esc(a.company)}</b>: ${esc(a.action.label)} <span class="${over?"over":""}">(${over?"overdue since":"due"} ${fmt(a.action.due)})</span></li>`}).join("");}
+  document.getElementById("foot").innerHTML=`Portal links had one-time tokens and personal IDs removed, so each opens the sign-in or dashboard page. Links marked <span class="unv">unverified</span> follow the company's usual portal pattern but weren't in the email; if one fails, use the email link. Email links open in your own Gmail.${DATA.not_found&&DATA.not_found.length?` No confirmation emails were found for ${esc(DATA.not_found.join(", "))}.`:""}`;
+}
+document.getElementById("q").addEventListener("input",()=>DATA&&render());
+document.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{filter=b.dataset.f;document.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",String(c===b)));DATA&&render();}));
+fetch("data.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(d=>{DATA=d;summary();render();})
+ .catch(e=>{document.getElementById("lede").textContent="Couldn't load the application list ("+e.message+"). Reload the page to try again.";});
+</script>
