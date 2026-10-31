@@ -1,3 +1,7 @@
+![Sample tracker page with fictional data](assets/tracker-preview.png)
+
+*Sample tracker page. All names, companies and roles are fictional.*
+
 # Job Application Tracker (Claude skill)
 
 Tracks your job applications from your email inbox. It finds every application (career sites, LinkedIn Easy Apply, Naukri/Indeed, recruiters, referrals), works out each status, keeps a single tracker page with candidate-portal links, detects rejections, interview invites and offers, and reminds you about pending actions. It works with Gmail, Outlook, Yahoo, iCloud, Zoho and custom domains.
