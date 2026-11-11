@@ -2,6 +2,14 @@
 
 *Sample tracker page. All names, companies and roles are fictional.*
 
+# Job Application Tracker (Claude skill)
+
+Tracks your job applications from your email inbox. It finds every application (career sites, LinkedIn Easy Apply, Naukri/Indeed, recruiters, referrals), works out each status, keeps a single tracker page with candidate-portal links, detects rejections, interview invites and offers, and reminds you about pending actions. It works with Gmail, Outlook, Yahoo, iCloud, Zoho and custom domains.
+
+No data is bundled in this skill. It reads only your own mail.
+
+**[Download the latest `.skill` file](https://github.com/swapnil-salunke/job-application-tracker/releases/latest/download/job-application-tracker.skill)** · [All releases](https://github.com/swapnil-salunke/job-application-tracker/releases) · [Live demo](https://swapnil-salunke.github.io/job-application-tracker/)
+
 ## Releases
 
 | Version | Date | What's new |
@@ -14,14 +22,6 @@
 | [v1.0.0](https://github.com/swapnil-salunke/job-application-tracker/releases/tag/v1.0.0) | 2026-10-21 | Initial release |
 
 Full list: [all releases](https://github.com/swapnil-salunke/job-application-tracker/releases).
-
-# Job Application Tracker (Claude skill)
-
-Tracks your job applications from your email inbox. It finds every application (career sites, LinkedIn Easy Apply, Naukri/Indeed, recruiters, referrals), works out each status, keeps a single tracker page with candidate-portal links, detects rejections, interview invites and offers, and reminds you about pending actions. It works with Gmail, Outlook, Yahoo, iCloud, Zoho and custom domains.
-
-No data is bundled in this skill. It reads only your own mail.
-
-**[Download the latest `.skill` file](https://github.com/swapnil-salunke/job-application-tracker/releases/latest/download/job-application-tracker.skill)** · [All releases](https://github.com/swapnil-salunke/job-application-tracker/releases) · [Live demo](https://swapnil-salunke.github.io/job-application-tracker/)
 
 ## Step-by-step guide
 
