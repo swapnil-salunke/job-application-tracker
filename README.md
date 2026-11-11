@@ -8,7 +8,7 @@ Tracks your job applications from your email inbox. It finds every application (
 
 No data is bundled in this skill. It reads only your own mail.
 
-**[Download the latest `.skill` file](https://github.com/swapnil-salunke/job-application-tracker/releases/latest/download/job-application-tracker.skill)** · [All releases](https://github.com/swapnil-salunke/job-application-tracker/releases)
+**[Download the latest `.skill` file](https://github.com/swapnil-salunke/job-application-tracker/releases/latest/download/job-application-tracker.skill)** · [All releases](https://github.com/swapnil-salunke/job-application-tracker/releases) · [Live demo](https://swapnil-salunke.github.io/job-application-tracker/)
 
 ## Step-by-step guide
 
@@ -80,6 +80,7 @@ The tracker contains company names and dates. Share it view-only, and only with 
 | `assets/tracker-page.html` | Tracker page template |
 | `AGENTS.md` | Entry point for Codex |
 | `.cursor/rules/` | Rule for Cursor |
+| `docs/index.html` | Live demo page (GitHub Pages), built by `scripts/build_demo.py` |
 | `GETTING-STARTED.md` | Short guide for non-technical users |
 
 ## License
