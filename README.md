@@ -81,6 +81,7 @@ The tracker contains company names and dates. Share it view-only, and only with 
 | `AGENTS.md` | Entry point for Codex |
 | `.cursor/rules/` | Rule for Cursor |
 | `docs/index.html` | Live demo page (GitHub Pages), built by `scripts/build_demo.py` |
+| `.github/workflows/` | Auto-rebuilds the demo and attaches the `.skill` file to releases |
 | `GETTING-STARTED.md` | Short guide for non-technical users |
 
 ## License
