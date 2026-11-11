@@ -71,6 +71,11 @@ a:hover{text-decoration:underline}
 .todo h2{font-size:17px;margin:0 0 6px}
 .todo ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
 .todo .over{color:var(--bad);font-weight:600}
+.rej{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--bad);border-radius:8px;padding:12px 14px;margin:0 0 18px}
+.rej h2{font-size:17px;margin:0 0 6px}
+.rej ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.rej .why{color:var(--muted)}
+td.why{color:var(--muted);font-size:13px;min-width:160px}
 </style>
 
 <div class="wrap">
@@ -78,6 +83,7 @@ a:hover{text-decoration:underline}
   <p class="lede" id="lede">Loading your applications…</p>
   <div class="stats" id="stats"></div>
   <div class="todo" id="todo" hidden><h2>Needs your action</h2><ul id="todo-list"></ul></div>
+  <div class="rej" id="rej" hidden><h2>Recent rejections</h2><ul id="rej-list"></ul></div>
 
   <div class="bar" role="search">
     <input id="q" type="search" placeholder="Filter by company or role…" autocomplete="off" aria-label="Filter by company or role">
@@ -119,10 +125,11 @@ function table(items){
   const body=items.length?items.map(a=>`<tr>
     <td class="date">${esc(a.date)}</td>
     <td class="co">${esc(a.company)}${isNew(a)?'<span class="new">New</span>':""}<span class="src">${esc(a.source)}</span></td>
-    <td><span class="role">${esc(a.role||"—")}</span>${a.note?`<span class="note">${esc(a.note)}</span>`:""}${dueText(a)}</td>
+    <td><span class="role">${esc(a.role||"—")}</span>${a.note&&a.status!=="rejected"?`<span class="note">${esc(a.note)}</span>`:""}${dueText(a)}</td>
     <td><span class="pill ${CLS[a.status]||"s-applied"}">${LABEL[a.status]||esc(a.status)}</span></td>
-    <td>${linkCell(a)}</td></tr>`).join(""):`<tr><td colspan="5" class="empty">Nothing matches this filter.</td></tr>`;
-  return `<div class="tbl"><table><thead><tr><th>Date</th><th>Company</th><th>Role</th><th>Status</th><th>Links</th></tr></thead><tbody>${body}</tbody></table></div>`;
+    <td class="why">${a.status==="rejected"?esc(a.note||"No reason given"):""}</td>
+    <td>${linkCell(a)}</td></tr>`).join(""):`<tr><td colspan="6" class="empty">Nothing matches this filter.</td></tr>`;
+  return `<div class="tbl"><table><thead><tr><th>Date</th><th>Company</th><th>Role</th><th>Status</th><th>Reason</th><th>Links</th></tr></thead><tbody>${body}</tbody></table></div>`;
 }
 function render(){
   const q=document.getElementById("q").value.trim().toLowerCase();
@@ -140,6 +147,11 @@ function summary(){
   document.getElementById("stats").innerHTML=`<span><b>${R.length}</b> since ${fmt(DATA.window_start)}</span><span><b>${R.filter(a=>a.status==="applied").length}</b> in review</span><span><b>${R.filter(a=>a.status==="interview"||a.status==="offer").length}</b> interviews/offers</span><span><b>${acts.length}</b> need action</span><span><b>${R.filter(a=>a.status==="rejected").length}</b> closed</span>`;
   if(acts.length){document.getElementById("todo").hidden=false;
     document.getElementById("todo-list").innerHTML=acts.map(a=>{const over=a.action.due<today();return `<li><b>${esc(a.company)}</b>: ${esc(a.action.label)} <span class="${over?"over":""}">(${over?"overdue since":"due"} ${fmt(a.action.due)})</span></li>`}).join("");}
+  const cutoff=new Date(Date.now()-30*864e5).toISOString().slice(0,10);
+  const rejDate=a=>{const h=(a.history||[]).filter(x=>x.to==="rejected").map(x=>x.date).sort().pop();return h||a.date};
+  const rejs=DATA.apps.filter(a=>a.status==="rejected"&&rejDate(a)>=cutoff).sort((a,b)=>rejDate(b).localeCompare(rejDate(a)));
+  if(rejs.length){document.getElementById("rej").hidden=false;
+    document.getElementById("rej-list").innerHTML=rejs.map(a=>`<li><b>${esc(a.company)}</b>${a.role?" · "+esc(a.role):""} <span class="why">(${fmt(rejDate(a))}): ${esc(a.note||"No reason given")}</span></li>`).join("");}
   document.getElementById("foot").innerHTML=`Portal links had one-time tokens and personal IDs removed, so each opens the sign-in or dashboard page. Links marked <span class="unv">unverified</span> follow the company's usual portal pattern but weren't in the email; if one fails, use the email link. Email links open in your own Gmail.${DATA.not_found&&DATA.not_found.length?` No confirmation emails were found for ${esc(DATA.not_found.join(", "))}.`:""}`;
 }
 document.getElementById("q").addEventListener("input",()=>DATA&&render());
