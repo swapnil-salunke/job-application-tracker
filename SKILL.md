@@ -142,10 +142,13 @@ Add each change to the application's `history` (`[{date, from, to, source_thread
 ## 6. Build or update the tracker page
 
 Use the template `assets/tracker-page.html`. It loads `data.json` at runtime, so normally only `data.json` changes:
-- One combined list, newest first, for the window. Older entries go in a collapsed section. Do not split the list by source.
+- A "Recent rejections" summary box at the top, showing rejections from the last 30 days with one-line rejection reasons extracted from the rejection emails.
 - A "Needs your action" box at the top, sorted by due date, with overdue items in red.
+- One combined list, newest first, for the window. Older entries go in a collapsed section. Do not split the list by source.
 - Search box and filters: All / In review / Needs action / Closed.
-- Each row: date · company (+ source) · role (+ note, + due line) · status pill · portal link + email link.
+- Each row: date · company (+ source) · role (+ due line if action) · status pill · reason (rejection reason for rejected status) · portal link + email link.
+
+**Rejection reason extraction:** when an application's status changes to rejected, extract the rejection reason from the rejection email (the one that triggered the status change). Store it in the application's `note` field. The tracker displays this reason in a dedicated "Reason" column for rejected applications and also in the "Recent rejections" summary at the top.
 
 If you build the page from the Artifact tool, load its page-design guidance first. Publish the HTML with `files: {"data.json": <path>}`, update `config.tracker_url`, and keep the same URL afterwards.
 
