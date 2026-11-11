@@ -2,13 +2,11 @@
 
 *Sample tracker page. All names, companies and roles are fictional.*
 
-# Job Application Tracker (agent skill)
+# Job Application Tracker (Claude skill)
 
 Tracks your job applications from your email inbox. It finds every application (career sites, LinkedIn Easy Apply, Naukri/Indeed, recruiters, referrals), works out each status, keeps a single tracker page with candidate-portal links, detects rejections (with the reason), interview invites and offers, and reminds you about pending actions. It works with Gmail, Outlook, Yahoo, iCloud, Zoho and custom domains.
 
 It reads only your own mail and bundles no data.
-
-Built for Claude, with setup instructions for Codex and Cursor too. Claude gets the full experience: a published tracker page and built-in daily scheduling. Other agents store the tracker in a local `job-tracker/` folder and need a manual or cron-based daily check.
 
 **[Download the latest `.skill` file](https://github.com/swapnil-salunke/job-application-tracker/releases/latest/download/job-application-tracker.skill)** · [Live demo](https://swapnil-salunke.github.io/job-application-tracker/) · [All releases](https://github.com/swapnil-salunke/job-application-tracker/releases)
 
@@ -37,23 +35,23 @@ Full list: [all releases](https://github.com/swapnil-salunke/job-application-tra
 | **Codex** | Clone the repo into your project. Codex reads [`AGENTS.md`](AGENTS.md), which points to `SKILL.md`. |
 | **Cursor** | Clone the repo and open it, or copy `SKILL.md`, `scripts/`, `references/`, `assets/` and `.cursor/rules/job-application-tracker.mdc` into your project. |
 
-In Codex and Cursor the mailbox connects over IMAP (or a mail MCP server) rather than a Claude connector.
+Codex and Cursor connect to your mailbox over IMAP (or a mail MCP server), store the tracker in a local `job-tracker/` folder instead of a Claude Artifact, and have no built-in scheduler for the daily check.
 
 ### 2. Start setup
-In a new chat, say **"Set up my job application tracker"**. Your agent asks for the email address you use for job applications.
+In a new chat, say **"Set up my job application tracker"**. Claude asks for the email address you use for job applications.
 
 ### 3. Connect your mailbox
-Your agent detects your email provider and picks the first method that works:
+Claude detects your email provider and picks the first method that works:
 
 1. **Native connector** (Gmail, Outlook/Microsoft 365). You sign in through the normal OAuth screen. No password is shared.
 2. **Integration hub** such as Zapier, after you connect your account there.
-3. **IMAP with an app password.** It walks you through creating one for your provider and storing it as environment secrets (`MAIL_IMAP_HOST`, `MAIL_USER`, `MAIL_APP_PASSWORD`). Never paste your real password into chat.
-4. **Forwarding.** You auto-forward job-related mail to an inbox the agent can read.
+3. **IMAP with an app password.** Claude walks you through creating one for your provider and storing it as environment secrets (`MAIL_IMAP_HOST`, `MAIL_USER`, `MAIL_APP_PASSWORD`). Never paste your real password into chat.
+4. **Forwarding.** You auto-forward job-related mail to an inbox Claude can read.
 
-The agent confirms the connection with one test search.
+Claude confirms the connection with one test search.
 
 ### 4. First scan
-The agent scans the last 60 days of mail and builds your tracker: one list with company, role, source, date applied, status, candidate-portal link and any action due.
+Claude scans the last 60 days of mail and builds your tracker: one list with company, role, source, date applied, status, candidate-portal link and any action due.
 
 ### 5. Daily use
 Ask any time: "Check my applications", "What are my overdue action items?" or "Which applications have a candidate portal link?"
@@ -68,7 +66,7 @@ The tracker contains company names and dates, so share it view-only and only wit
 
 | Path | Purpose |
 |---|---|
-| `SKILL.md` | Instructions the agent follows |
+| `SKILL.md` | Instructions Claude follows |
 | `scripts/detect_provider.py`, `scripts/imap_search.py` | Identify your email provider; search mail over IMAP |
 | `references/` | Data schema and provider connection details |
 | `assets/tracker-page.html` | Tracker page template |
