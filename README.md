@@ -84,5 +84,18 @@ The tracker contains company names and dates. Share it view-only, and only with 
 | `.github/workflows/` | Auto-rebuilds the demo and attaches the `.skill` file to releases |
 | `GETTING-STARTED.md` | Short guide for non-technical users |
 
+## Releases
+
+| Version | Date | What's new |
+|---|---|---|
+| [v1.2.1](https://github.com/swapnil-salunke/job-application-tracker/releases/tag/v1.2.1) | 2026-11-11 | Live demo page (GitHub Pages) and a fix for garbled characters in the tracker page |
+| [v1.2.0](https://github.com/swapnil-salunke/job-application-tracker/releases/tag/v1.2.0) | 2026-11-11 | Rejection reasons: "Recent rejections" box and a Reason column |
+| [v1.1.0](https://github.com/swapnil-salunke/job-application-tracker/releases/tag/v1.1.0) | 2026-10-21 | Codex (`AGENTS.md`) and Cursor (`.cursor/rules`) support |
+| [v1.0.2](https://github.com/swapnil-salunke/job-application-tracker/releases/tag/v1.0.2) | 2026-10-21 | Direct download link to the latest release in the README |
+| [v1.0.1](https://github.com/swapnil-salunke/job-application-tracker/releases/tag/v1.0.1) | 2026-10-21 | Step-by-step install and setup guide in the README |
+| [v1.0.0](https://github.com/swapnil-salunke/job-application-tracker/releases/tag/v1.0.0) | 2026-10-21 | Initial release |
+
+Full list: [all releases](https://github.com/swapnil-salunke/job-application-tracker/releases).
+
 ## License
 MIT. See [LICENSE](LICENSE).
