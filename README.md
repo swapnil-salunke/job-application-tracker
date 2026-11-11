@@ -4,11 +4,11 @@
 
 # Job Application Tracker (Claude skill)
 
-Tracks your job applications from your email inbox. It finds every application (career sites, LinkedIn Easy Apply, Naukri/Indeed, recruiters, referrals), works out each status, keeps a single tracker page with candidate-portal links, detects rejections, interview invites and offers, and reminds you about pending actions. It works with Gmail, Outlook, Yahoo, iCloud, Zoho and custom domains.
+Tracks your job applications from your email inbox. It finds every application (career sites, LinkedIn Easy Apply, Naukri/Indeed, recruiters, referrals), works out each status, keeps a single tracker page with candidate-portal links, detects rejections (with the reason), interview invites and offers, and reminds you about pending actions. It works with Gmail, Outlook, Yahoo, iCloud, Zoho and custom domains.
 
-No data is bundled in this skill. It reads only your own mail.
+It reads only your own mail and bundles no data.
 
-**[Download the latest `.skill` file](https://github.com/swapnil-salunke/job-application-tracker/releases/latest/download/job-application-tracker.skill)** · [All releases](https://github.com/swapnil-salunke/job-application-tracker/releases) · [Live demo](https://swapnil-salunke.github.io/job-application-tracker/)
+**[Download the latest `.skill` file](https://github.com/swapnil-salunke/job-application-tracker/releases/latest/download/job-application-tracker.skill)** · [Live demo](https://swapnil-salunke.github.io/job-application-tracker/) · [All releases](https://github.com/swapnil-salunke/job-application-tracker/releases)
 
 ## Releases
 
@@ -25,36 +25,19 @@ Full list: [all releases](https://github.com/swapnil-salunke/job-application-tra
 
 ## Step-by-step guide
 
-### 1. Install the skill
+### 1. Install
 
-**Claude app (easiest)**
-1. [Download `job-application-tracker.skill`](https://github.com/swapnil-salunke/job-application-tracker/releases/latest/download/job-application-tracker.skill) (always the latest release).
-2. Open Claude, go to **Settings > Skills**, and choose **Upload skill**.
-3. Select the downloaded file and make sure the skill is switched on.
+| Where | How |
+|---|---|
+| **Claude app** | Download the `.skill` file above, then **Settings > Skills > Upload skill** and switch it on. |
+| **Claude Code** | `git clone https://github.com/swapnil-salunke/job-application-tracker.git ~/.claude/skills/job-application-tracker` |
+| **Codex** | Clone the repo into your project. Codex reads [`AGENTS.md`](AGENTS.md), which points to `SKILL.md`. |
+| **Cursor** | Clone the repo and open it, or copy `SKILL.md`, `scripts/`, `references/`, `assets/` and `.cursor/rules/job-application-tracker.mdc` into your project. |
 
-**Claude Code**
-```bash
-git clone https://github.com/swapnil-salunke/job-application-tracker.git ~/.claude/skills/job-application-tracker
-```
-
-### Use it in Codex or Cursor
-
-The same repo works in other agents. Mailbox connection uses IMAP with an app password (or a mail MCP server), and the tracker is stored as a local `job-tracker/` folder instead of a Claude Artifact. Daily scheduling is manual or via cron.
-
-**Codex**: clone the repo into your project (or any folder you run Codex in). Codex reads [`AGENTS.md`](AGENTS.md), which points to `SKILL.md`. Then say "Set up my job application tracker".
-
-```bash
-git clone https://github.com/swapnil-salunke/job-application-tracker.git
-```
-
-**Cursor**: clone the repo and open it in Cursor, or copy `SKILL.md`, `scripts/`, `references/`, `assets/` and `.cursor/rules/job-application-tracker.mdc` into your project. The rule loads when you ask about job applications.
+Codex and Cursor connect to your mailbox over IMAP (or a mail MCP server), store the tracker in a local `job-tracker/` folder instead of a Claude Artifact, and have no built-in scheduler for the daily check.
 
 ### 2. Start setup
-In a new chat, say:
-
-> Set up my job application tracker
-
-Claude asks for the email address you use for job applications.
+In a new chat, say **"Set up my job application tracker"**. Claude asks for the email address you use for job applications.
 
 ### 3. Connect your mailbox
 Claude detects your email provider and picks the first method that works:
@@ -67,35 +50,28 @@ Claude detects your email provider and picks the first method that works:
 Claude confirms the connection with one test search.
 
 ### 4. First scan
-Claude scans the last 60 days of mail, then builds your tracker: one list with company, role, source, date applied, status, candidate-portal link and any action due.
+Claude scans the last 60 days of mail and builds your tracker: one list with company, role, source, date applied, status, candidate-portal link and any action due.
 
 ### 5. Daily use
-Ask any time:
-
-- "Check my applications"
-- "What are my overdue action items?"
-- "Which applications have a candidate portal link?"
+Ask any time: "Check my applications", "What are my overdue action items?" or "Which applications have a candidate portal link?"
 
 ### 6. Automate it (optional)
-Say "Run the tracker daily at 9 am". The daily check adds new applications, detects status changes and notifies you only when something is new, changed or due.
+Say **"Run the tracker daily at 9 am"**. The daily check adds new applications, detects status changes and notifies you only when something is new, changed or due.
 
 ### 7. Share your tracker (optional)
-The tracker contains company names and dates. Share it view-only, and only with people you trust.
+The tracker contains company names and dates, so share it view-only and only with people you trust.
 
 ## What's inside
 
 | Path | Purpose |
 |---|---|
 | `SKILL.md` | Instructions Claude follows |
-| `scripts/detect_provider.py` | Identifies your email provider |
-| `scripts/imap_search.py` | Searches mail over IMAP |
+| `scripts/detect_provider.py`, `scripts/imap_search.py` | Identify your email provider; search mail over IMAP |
 | `references/` | Data schema and provider connection details |
 | `assets/tracker-page.html` | Tracker page template |
-| `AGENTS.md` | Entry point for Codex |
-| `.cursor/rules/` | Rule for Cursor |
+| `AGENTS.md`, `.cursor/rules/` | Entry points for Codex and Cursor |
 | `docs/index.html` | Live demo page (GitHub Pages), built by `scripts/build_demo.py` |
 | `.github/workflows/` | Auto-rebuilds the demo and attaches the `.skill` file to releases |
-| `GETTING-STARTED.md` | Short guide for non-technical users |
 
 ## License
 MIT. See [LICENSE](LICENSE).
