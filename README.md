@@ -14,6 +14,7 @@ It reads only your own mail and bundles no data.
 
 | Version | Date | What's new |
 |---|---|---|
+| [v1.2.3](https://github.com/swapnil-salunke/job-application-tracker/releases/tag/v1.2.3) | 2026-11-12 | Rejection dates fixed: dated from the rejection email, safe when history is missing, Closed view sorted by rejection date, timezone-aware cutoff, stronger daily-check self-check |
 | [v1.2.2](https://github.com/swapnil-salunke/job-application-tracker/releases/tag/v1.2.2) | 2026-11-11 | Refreshed preview image, releases table and a deduplicated README; CI automation for the demo and `.skill` file |
 | [v1.2.1](https://github.com/swapnil-salunke/job-application-tracker/releases/tag/v1.2.1) | 2026-11-11 | Live demo page (GitHub Pages) and a fix for garbled characters in the tracker page |
 | [v1.2.0](https://github.com/swapnil-salunke/job-application-tracker/releases/tag/v1.2.0) | 2026-11-11 | Rejection reasons: "Recent rejections" box and a Reason column |

@@ -56,5 +56,5 @@ Notes
 - `owner_name`, `timezone` and `window_start` are mirrored at the top level because the page template reads them from there.
 - `window_start` = today − `config.window_days`. Recompute it on every run.
 - Dates are `YYYY-MM-DD` in the user's timezone. `last_checked` is in UTC.
-- For `status: "rejected"`, `note` holds the one-line rejection reason taken from the rejection email. The page shows it in the Reason column and in the "Recent rejections" box (rejections from the last 30 days, dated from the `history` entry that moved the status to `rejected`).
+- For `status: "rejected"`, `note` holds the one-line rejection reason taken from the rejection email. The row must also carry a `history` entry with `"to": "rejected"` whose `date` is the day the rejection email was received (the expiry date for expired drafts). The page shows the reason in the Reason column and in the "Recent rejections" box (rejections from the last 30 days, dated and ordered by the latest such entry). Never use the application date as the rejection date.
 - `id`s stay stable across runs. Never renumber them.

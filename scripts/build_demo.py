@@ -17,6 +17,7 @@ def apps():
         A("a6", 20, "Helio Health", "Principal Engineer", "Referral", "referral", note="Referral from a former colleague; still to apply", action=dict(type="referral_apply", label="Apply through the referral link", detected="@5", due="@3", done=False)),
         A("a7", 35, "Lumen Pay", "Software Architect", "company site", "applied"),
         A("a8", 80, "Vertex AI Co", "Engineering Lead", "LinkedIn Easy Apply", "rejected", note="Role closed", history=[dict(date="@60", **{"from": "applied", "to": "rejected"})]),
+        A("a9", 45, "Summit Robotics", "Engineering Manager", "company site", "rejected", note="Chose a candidate with more domain experience", history=[dict(date="@2", **{"from": "applied", "to": "rejected"})]),
     ]
 
 data = dict(config={}, owner_name="Demo", timezone="UTC", updated="@0", window_start="@60", not_found=[], apps=apps())

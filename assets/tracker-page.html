@@ -105,7 +105,10 @@ const G = id => `https://mail.google.com/mail/u/0/#all/${id}`;
 const LABEL = {applied:"In review", rejected:"Closed", action:"Needs action", referral:"Referral", interview:"Interview", offer:"Offer"};
 const CLS = {applied:"s-applied", rejected:"s-rejected", action:"s-action", referral:"s-referral", interview:"s-referral", offer:"s-applied"};
 let DATA = null, filter = "all";
-const today = () => new Date().toISOString().slice(0,10);
+const today = () => { try { return new Date().toLocaleDateString("en-CA",{timeZone:(DATA&&DATA.timezone)||undefined}); } catch(e){ return new Date().toISOString().slice(0,10); } };
+const daysAgo = n => { const t=new Date(today()+"T00:00:00Z"); t.setUTCDate(t.getUTCDate()-n); return t.toISOString().slice(0,10); };
+// Date a row was rejected: latest history entry that moved it to "rejected"; the application date only as a last resort. Safe when history is missing.
+const rejDate = a => { const h=(Array.isArray(a.history)?a.history:[]).filter(x=>x&&x.to==="rejected"&&x.date).map(x=>x.date).sort().pop(); return h||a.date; };
 function esc(s){return String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 function fmt(d){const t=new Date(d+"T00:00:00");return t.toLocaleDateString("en-GB",{day:"numeric",month:"short"})}
 function isNew(a){ if(!a.added) return false; const d=(new Date(today())-new Date(a.added))/864e5; return d>=0&&d<3; }
@@ -129,16 +132,18 @@ function table(items){
     <td class="date">${esc(a.date)}</td>
     <td class="co">${esc(a.company)}${isNew(a)?'<span class="new">New</span>':""}<span class="src">${esc(a.source)}</span></td>
     <td><span class="role">${esc(a.role||"—")}</span>${a.note&&a.status!=="rejected"?`<span class="note">${esc(a.note)}</span>`:""}${dueText(a)}</td>
-    <td><span class="pill ${CLS[a.status]||"s-applied"}">${LABEL[a.status]||esc(a.status)}</span></td>
+    <td><span class="pill ${CLS[a.status]||"s-applied"}">${LABEL[a.status]||esc(a.status)}</span>${a.status==="rejected"?`<span class="src">${fmt(rejDate(a))}</span>`:""}</td>
     <td class="why">${a.status==="rejected"?esc(a.note||"No reason given"):""}</td>
     <td>${linkCell(a)}</td></tr>`).join(""):`<tr><td colspan="6" class="empty">Nothing matches this filter.</td></tr>`;
   return `<div class="tbl"><table><thead><tr><th>Date</th><th>Company</th><th>Role</th><th>Status</th><th>Reason</th><th>Links</th></tr></thead><tbody>${body}</tbody></table></div>`;
 }
 function render(){
   const q=document.getElementById("q").value.trim().toLowerCase();
-  const all=[...DATA.apps].sort((a,b)=>b.date.localeCompare(a.date));
-  const recent=all.filter(a=>a.date>=DATA.window_start&&matches(a,q));
-  const older=all.filter(a=>a.date<DATA.window_start&&matches(a,q));
+  // In the Closed view, order and split by rejection date so a fresh rejection of an older application isn't buried.
+  const key=a=>(filter==="rejected"&&a.status==="rejected")?rejDate(a):a.date;
+  const all=[...DATA.apps].sort((a,b)=>key(b).localeCompare(key(a)));
+  const recent=all.filter(a=>key(a)>=DATA.window_start&&matches(a,q));
+  const older=all.filter(a=>key(a)<DATA.window_start&&matches(a,q));
   document.getElementById("sections").innerHTML=
     `<section id="recent"><h2>Since ${fmt(DATA.window_start)} <span class="cnt">(${recent.length})</span></h2>${table(recent)}</section>
      <section id="earlier"><details${q?" open":""}><summary style="cursor:pointer"><h2 style="display:inline">Older applications <span class="cnt">(${older.length})</span></h2></summary><p class="sub">Mostly closed. Kept so you can spot repeat applications.</p>${table(older)}</details></section>`;
@@ -150,8 +155,7 @@ function summary(){
   document.getElementById("stats").innerHTML=`<span><b>${R.length}</b> since ${fmt(DATA.window_start)}</span><span><b>${R.filter(a=>a.status==="applied").length}</b> in review</span><span><b>${R.filter(a=>a.status==="interview"||a.status==="offer").length}</b> interviews/offers</span><span><b>${acts.length}</b> need action</span><span><b>${R.filter(a=>a.status==="rejected").length}</b> closed</span>`;
   if(acts.length){document.getElementById("todo").hidden=false;
     document.getElementById("todo-list").innerHTML=acts.map(a=>{const over=a.action.due<today();return `<li><b>${esc(a.company)}</b>: ${esc(a.action.label)} <span class="${over?"over":""}">(${over?"overdue since":"due"} ${fmt(a.action.due)})</span></li>`}).join("");}
-  const cutoff=new Date(Date.now()-30*864e5).toISOString().slice(0,10);
-  const rejDate=a=>{const h=(a.history||[]).filter(x=>x.to==="rejected").map(x=>x.date).sort().pop();return h||a.date};
+  const cutoff=daysAgo(30);
   const rejs=DATA.apps.filter(a=>a.status==="rejected"&&rejDate(a)>=cutoff).sort((a,b)=>rejDate(b).localeCompare(rejDate(a)));
   if(rejs.length){document.getElementById("rej").hidden=false;
     document.getElementById("rej-list").innerHTML=rejs.map(a=>`<li><b>${esc(a.company)}</b>${a.role?" · "+esc(a.role):""} <span class="why">(${fmt(rejDate(a))}): ${esc(a.note||"No reason given")}</span></li>`).join("");}

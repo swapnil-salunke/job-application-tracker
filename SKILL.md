@@ -113,7 +113,7 @@ Default deadlines (apply any `reminder_overrides` on top):
 **When to remind** (compare in the user's timezone, at most once per action per day):
 - due tomorrow or today, and not reminded today: send a "due soon" reminder
 - overdue: remind on the first overdue day, then every 2 days, up to 5 reminders. After that, list it under "Still pending" in the summary only.
-- Expired (e.g. a 30-day draft window passed): set `status: "rejected"` and `note: "expired"`, and stop reminding.
+- Expired (e.g. a 30-day draft window passed): set `status: "rejected"` and `note: "expired"`, add the dated `history` entry (see Rejection dates in section 5), and stop reminding.
 - Record `last_reminded` and increment `reminder_count` whenever a reminder is sent.
 
 ## 5. Daily check: new applications, then status changes
@@ -138,6 +138,12 @@ Every daily run does two passes over the mail since `last_checked` (with one day
 - ➕ new applications added since the last check, with company · role · source
 
 Add each change to the application's `history` (`[{date, from, to, source_thread}]`), then set `last_checked`.
+
+**Rejection dates (mandatory):** every move to `rejected` writes a `history` entry with `to: "rejected"`, whatever the path: a rejection email, a rejection first seen on a new row, an expiry, or a closure notice. Set its `date` to the date the rejection email was received (in the user's timezone), never the day you noticed it and never the application date. For an expiry, use the expiry date. The page dates and orders "Recent rejections" from this entry. If an old row is `rejected` with no such entry, find the rejection email and backfill it, and don't invent a date.
+
+**Self-check before you finish:** list every `rejected` row whose latest rejection date is within the last 30 days. Each must appear in the page's "Recent rejections" box. If one is missing, fix its `history` before republishing. When the user asks "did X reject me?", answer from the rejection email and confirm the row has a dated rejection entry too.
+
+**Don't trust a quiet scan:** a run that finds nothing is the most likely place to miss something. Before reporting "nothing new", re-run the ATS-sender query (2.3) on its own for the overlap window, and sample the newest unread messages from those senders.
 
 ## 6. Build or update the tracker page
 
