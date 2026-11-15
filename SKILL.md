@@ -47,14 +47,15 @@ The `config` block in `data.json`:
 
 ## 2. Scan email
 
-Search through the connection from step 0. The queries below are in Gmail syntax. Translate them for Outlook/Graph or IMAP using the table in `references/email-providers.md`. On IMAP, run one `imap_search.py` call per phrase or sender and merge the results by Message-ID. Full scan: `newer_than:<window_days>d`. Incremental scan: since `last_checked` minus one day of overlap. Page through all results.
+Search through the connection from step 0. The queries below are in Gmail syntax. Translate them for Outlook/Graph or IMAP using the table in `references/email-providers.md`. On IMAP, run one `imap_search.py` call per phrase or sender and merge the results by Message-ID. Full scan: `newer_than:<window_days>d`. Incremental scan: start from the previous run's real `last_checked` timestamp minus one day of overlap (24 h), never from a midnight-UTC date or a bare calendar day. Gmail's `after:` evaluates at midnight, so use the date of (`last_checked` − 1 day), then drop messages older than that exact time. If `last_checked` is missing or is exactly a midnight value (`T00:00:00Z`), treat it as untrustworthy and fall back to `updated` minus 2 days. Page through all results.
 
 1. **LinkedIn Easy Apply:** `subject:("your application was sent to")`. The company is in the subject.
 2. **Confirmations:** `("thank you for applying" OR "thanks for applying" OR "application received" OR "received your application" OR "thank you for your application" OR "application submitted" OR "successfully applied")`
-3. **ATS senders:** `from:(myworkday.com OR myworkdayjobs.com OR greenhouse.io OR greenhouse-mail.io OR lever.co OR smartrecruiters.com OR successfactors.com OR taleo.net OR icims.com OR ashbyhq.com OR workablemail.com OR oraclecloud.com OR avature.net OR teamtailor-mail.com OR bamboohr.com OR jobvite.com OR phenom.com)`
-4. **Job boards:** `from:(naukri.com OR indeed.com OR talent500.co OR instahyre.com OR iimjobs.com OR hirist.tech OR wellfound.com OR cutshort.io OR glassdoor.com OR seek.com OR stepstone.de) (applied OR application)`. Include regional boards for the user's country.
-5. **Status changes:** `("unfortunately" OR "not moving forward" OR "other candidates" OR "not been selected" OR "position has been filled" OR "interview" OR "schedule a call" OR "availability" OR "assessment" OR "coding challenge" OR "HackerRank" OR "Codility" OR "offer letter" OR "next steps")`
-6. **Actions and referrals:** `("action required" OR "pending task" OR "complete your application" OR "verify your" OR "confirm your email" OR "referred" OR "draft")`
+3. **ATS senders:** `from:(myworkday.com OR myworkdayjobs.com OR greenhouse.io OR greenhouse-mail.io OR lever.co OR smartrecruiters.com OR successfactors.com OR taleo.net OR icims.com OR ashbyhq.com OR workablemail.com OR oraclecloud.com OR avature.net OR teamtailor-mail.com OR bamboohr.com OR jobvite.com OR phenom.com OR hibob.com OR rippling.com OR recruitee.com OR breezy.hr OR pinpointhq.com OR jazzhr.com OR comeet.co OR personio.com OR personio.de OR join.com OR freshteam.com OR zohorecruit.com OR eightfold.ai OR gem.com OR dayforcehcm.com OR ultipro.com OR paylocity.com OR csod.com OR applytojob.com)`
+4. **Generic confirmation subjects (any sender):** `subject:("thank you for applying" OR "thanks for applying" OR "thank you for your application" OR "we received your application" OR "application received" OR "your recent job application" OR "your application to" OR "application confirmation") -from:linkedin.com`. This catches unknown ATS vendors. Review each hit and skip digests, newsletters and job alerts. When a new ATS sender domain turns up, add it to query 3 and `references/email-providers.md`.
+5. **Job boards:** `from:(naukri.com OR indeed.com OR talent500.co OR instahyre.com OR iimjobs.com OR hirist.tech OR wellfound.com OR cutshort.io OR glassdoor.com OR seek.com OR stepstone.de) (applied OR application)`. Include regional boards for the user's country.
+6. **Status changes:** `("unfortunately" OR "not moving forward" OR "other candidates" OR "not been selected" OR "position has been filled" OR "interview" OR "schedule a call" OR "availability" OR "assessment" OR "coding challenge" OR "HackerRank" OR "Codility" OR "offer letter" OR "next steps")`
+7. **Actions and referrals:** `("action required" OR "pending task" OR "complete your application" OR "verify your" OR "confirm your email" OR "referred" OR "draft")`
 
 Skip job-alert digests, "jobs similar to…" and "recommended for you" emails, newsletters, marketing, and bare OTP or verification codes. None of these are applications.
 
@@ -118,10 +119,10 @@ Default deadlines (apply any `reminder_overrides` on top):
 
 ## 5. Daily check: new applications, then status changes
 
-Every daily run does two passes over the mail since `last_checked` (with one day of overlap), in this order.
+Every daily run does two passes over the mail since the previous run's `last_checked` minus one day of overlap (see section 2; never start from a midnight date), in this order.
 
 **Pass 1: find new applications and add them.**
-1. Run the application-discovery searches from section 2 (queries 1–4, plus referral, recruiter and draft emails from query 6).
+1. Run the application-discovery searches from section 2 (queries 1–5, plus referral, recruiter and draft emails from query 7).
 2. For each confirmation, build an application record (section 3) and check it against `apps`:
    - **Duplicate:** the same `thread`/Message-ID, the same company + req ID, or the same company + normalised role within 14 days. Merge it and keep the earliest date. Same-job aliases (a staffing firm's posting vs. the end client, or Indeed Apply vs. the company ATS) also merge, with a note.
    - **Re-application:** the same company and role but more than 30 days after a closed one. Add it as a new row with note "re-applied", and keep the old row.
@@ -137,13 +138,13 @@ Every daily run does two passes over the mail since `last_checked` (with one day
 - 🔴 rejections and closures
 - ➕ new applications added since the last check, with company · role · source
 
-Add each change to the application's `history` (`[{date, from, to, source_thread}]`), then set `last_checked`.
+Add each change to the application's `history` (`[{date, from, to, source_thread}]`), then set `last_checked` to the actual time this run started, in UTC (e.g. `2026-11-15T03:04:12Z`). Never write a date-only or midnight value: it would make the next run's window start too late and skip mail.
 
 **Rejection dates (mandatory):** every move to `rejected` writes a `history` entry with `to: "rejected"`, whatever the path: a rejection email, a rejection first seen on a new row, an expiry, or a closure notice. Set its `date` to the date the rejection email was received (in the user's timezone), never the day you noticed it and never the application date. For an expiry, use the expiry date. The page dates and orders "Recent rejections" from this entry. If an old row is `rejected` with no such entry, find the rejection email and backfill it, and don't invent a date.
 
 **Self-check before you finish:** list every `rejected` row whose latest rejection date is within the last 30 days. Each must appear in the page's "Recent rejections" box. If one is missing, fix its `history` before republishing. When the user asks "did X reject me?", answer from the rejection email and confirm the row has a dated rejection entry too.
 
-**Don't trust a quiet scan:** a run that finds nothing is the most likely place to miss something. Before reporting "nothing new", re-run the ATS-sender query (2.3) on its own for the overlap window, and sample the newest unread messages from those senders.
+**Don't trust a quiet scan:** a run that finds nothing is the most likely place to miss something. Before reporting "nothing new", re-run the ATS-sender query (2.3) and the generic-subject query (2.4) on their own for the overlap window, and sample the newest unread messages from those senders.
 
 ## 6. Build or update the tracker page
 
