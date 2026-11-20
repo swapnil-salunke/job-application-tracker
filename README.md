@@ -34,6 +34,7 @@ Full list: [all releases](https://github.com/swapnil-salunke/job-application-tra
 |---|---|
 | **Claude app** | Download the `.skill` file above, then **Settings > Skills > Upload skill** and switch it on. |
 | **Claude Code** | `git clone https://github.com/swapnil-salunke/job-application-tracker.git ~/.claude/skills/job-application-tracker` |
+| **Claude Code subagent** | Clone the repo into your project. Claude Code picks up [`.claude/agents/job-application-tracker.md`](.claude/agents/job-application-tracker.md), so you can ask it to run the tracker as an agent. |
 | **Codex** | Clone the repo into your project. Codex reads [`AGENTS.md`](AGENTS.md), which points to `SKILL.md`. |
 | **Cursor** | Clone the repo and open it, or copy `SKILL.md`, `scripts/`, `references/`, `assets/` and `.cursor/rules/job-application-tracker.mdc` into your project. |
 
@@ -72,7 +73,7 @@ The tracker contains company names and dates, so share it view-only and only wit
 | `scripts/detect_provider.py`, `scripts/imap_search.py` | Identify your email provider; search mail over IMAP |
 | `references/` | Data schema and provider connection details |
 | `assets/tracker-page.html` | Tracker page template |
-| `AGENTS.md`, `.cursor/rules/` | Entry points for Codex and Cursor |
+| `.claude/agents/`, `AGENTS.md`, `.cursor/rules/` | Entry points for Claude Code (subagent), Codex and Cursor |
 | `docs/index.html` | Live demo page (GitHub Pages), built by `scripts/build_demo.py` |
 | `.github/workflows/` | Auto-rebuilds the demo and attaches the `.skill` file to releases |
 
