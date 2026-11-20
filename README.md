@@ -14,6 +14,7 @@ It reads only your own mail and bundles no data.
 
 | Version | Date | What's new |
 |---|---|---|
+| [v1.2.5](https://github.com/swapnil-salunke/job-application-tracker/releases/tag/v1.2.5) | 2026-11-20 | Claude Code subagent (`.claude/agents/job-application-tracker.md`) so the tracker can run as an agent |
 | [v1.2.4](https://github.com/swapnil-salunke/job-application-tracker/releases/tag/v1.2.4) | 2026-11-15 | Scan fixes: incremental scan starts from the real `last_checked` minus a day (never a midnight date), more ATS senders (hibob, Rippling, Recruitee, Breezy, Pinpoint, JazzHR, Comeet, Personio…), generic "thank you for applying" subject query for unknown vendors |
 | [v1.2.3](https://github.com/swapnil-salunke/job-application-tracker/releases/tag/v1.2.3) | 2026-11-12 | Rejection dates fixed: dated from the rejection email, safe when history is missing, Closed view sorted by rejection date, timezone-aware cutoff, stronger daily-check self-check |
 | [v1.2.2](https://github.com/swapnil-salunke/job-application-tracker/releases/tag/v1.2.2) | 2026-11-11 | Refreshed preview image, releases table and a deduplicated README; CI automation for the demo and `.skill` file |
